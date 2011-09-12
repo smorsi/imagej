@@ -56,6 +56,7 @@ import imagej.envisaje.spi.tools.PaintParticipant.Repainter;
 import imagej.envisaje.spi.tools.Tool;
 import imagej.envisaje.api.image.Surface;
 import imagej.envisaje.misccomponents.FileChooserUtils;
+import imagej.util.FileUtils;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.Lookups;
@@ -250,7 +251,7 @@ public class ImageTool implements Tool, MouseListener, MouseMotionListener, KeyL
             if (f.isDirectory()) {
                 return true;
             } else {
-                String s = getFileExt(f);
+                String s = FileUtils.getFileExtention(f);
                 return s != null && formats.contains(s);
             }
         }
@@ -259,12 +260,7 @@ public class ImageTool implements Tool, MouseListener, MouseMotionListener, KeyL
             return NbBundle.getMessage(getClass(), "Image_File_Formats"); //NOI18N
         }
 
-        private String getFileExt(File f) {
-            String s = f.getName();
-            int ix = s.lastIndexOf(".");
-            return ix <= 0 && ix < s.length() - 2 ? null : s.substring(ix + 1, s.length()).toLowerCase();
-        }
-    }
+   }
 
     private static final class ImagePanel extends JComponent implements PropertyChangeListener {
 
