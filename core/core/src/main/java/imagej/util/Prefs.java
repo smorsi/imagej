@@ -258,23 +258,23 @@ public final class Prefs {
 	/**
 	 * Puts a list into the preferences.
 	 */
-	public static void putMap(Map map, String key) {
+	public static void putMap(Map<String, String> map, String key) {
 		putMap(prefs(null), map, key);
 	}
 	
-	public static void putMap(Preferences preferences, Map map, String key) {
+	public static void putMap(Preferences preferences, Map<String, String> map, String key) {
 		putMap(preferences.node(key), map);
 	}
 
 	/**
 	 * Puts a list into the preferences.
 	 */
-	public static void putMap(Preferences preferences, Map map) {
+	public static void putMap(Preferences preferences, Map<String, String> map) {
 		if (preferences == null) {
 			throw new IllegalArgumentException("Preferences not set.");
 		}
-		for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
+		for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<String, String> entry = iter.next();
 			Object value = entry.getValue();
 			preferences.put(entry.getKey().toString(), value == null ? null : value.toString());
 		}
@@ -283,22 +283,22 @@ public final class Prefs {
 	/**
 	 * Gets a Map from the preferences.
 	 */
-	public static Map getMap(String key) {
+	public static Map<String, String> getMap(String key) {
 		return getMap(prefs(null), key);
 	}
 	
-	public static Map getMap(Preferences preferences, String key) {
+	public static Map<String, String> getMap(Preferences preferences, String key) {
 		return getMap(preferences.node(key));
 	}
 
 	/**
 	 * Gets a Map from the preferences.
 	 */
-	public static Map getMap(Preferences preferences) {
+	public static Map<String, String> getMap(Preferences preferences) {
 		if (preferences == null) {
 			throw new IllegalArgumentException("Preferences not set.");
 		}
-		Map map = new HashMap();
+		Map<String, String> map = new HashMap<String, String>();
 		try {
 			String[] keys = preferences.keys();
 			for (int index = 0; index < keys.length; index++) {
@@ -313,18 +313,18 @@ public final class Prefs {
 	/**
 	 * Puts a list into the preferences starting with "0" then "1"
 	 */
-	public static void putList(List list, String key) {
+	public static void putList(List<String> list, String key) {
 		putList(prefs(null), list, key);
 	}
 	
-	public static void putList(Preferences preferences, List list, String key) {
+	public static void putList(Preferences preferences, List<String> list, String key) {
 		putList(preferences.node(key), list);
 	}
 
 	/**
 	 * Puts a list into the preferences starting with "0" then "1"
 	 */
-	public static void putList(Preferences preferences, List list) {
+	public static void putList(Preferences preferences, List<String> list) {
 		if (preferences == null) {
 			throw new IllegalArgumentException("Preferences not set.");
 		}
@@ -338,11 +338,11 @@ public final class Prefs {
 	/**
 	 * Gets a List from the preferences, starting with "0", then "1" etc
 	 */
-	public static List getList(String key) {
+	public static List<String> getList(String key) {
 		return getList(prefs(null), key);
 	}
 
-	public static List getList(Preferences preferences, String key) {
+	public static List<String> getList(Preferences preferences, String key) {
 		return getList(preferences.node(key));
 	}
 
@@ -350,11 +350,11 @@ public final class Prefs {
 	 * Gets a List from the preferences, starting with "0", then "1" etc
 	 * Returns an empty ArrayList if nothing in prefs.
 	 */
-	public static List getList(Preferences preferences) {
+	public static List<String> getList(Preferences preferences) {
 		if (preferences == null) {
 			throw new IllegalArgumentException("Preferences not set.");
 		}
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		for (int index = 0; index < 1000; index++) {
 			String value = preferences.get("" + index, null);
 			if (value == null) {
@@ -372,7 +372,7 @@ public final class Prefs {
 		try {
 			Preferences prefs = Preferences.userNodeForPackage(String.class);
 			// Map...
-			Map map = new HashMap();
+			Map<String, String> map = new HashMap<String, String>();
 			map.put("0", "A");
 			map.put("1", "B");
 			map.put("2", "C");
@@ -384,7 +384,7 @@ public final class Prefs {
 			clear(prefs, MAP_KEY);
 			// List...
 			String RECENT_FILES = "RecentFiles";
-			List recentFiles = new  ArrayList(); 
+			List<String> recentFiles = new  ArrayList<String>(); 
 			//List recentFiles = PrefsUtil.getList(prefs, RECENT_FILES);
 			recentFiles.add("some/path1");
 			recentFiles.add("some/path2");
