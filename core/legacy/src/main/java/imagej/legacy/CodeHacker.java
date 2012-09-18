@@ -62,9 +62,11 @@ public class CodeHacker {
 	private static final String PATCH_SUFFIX = "Methods";
 
 	private final ClassPool pool;
+	private final ClassLoader classLoader;
 
-	public CodeHacker() {
-		pool = ClassPool.getDefault();
+	public CodeHacker(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+		pool = new ClassPool();
 		pool.appendClassPath(new ClassClassPath(getClass()));
 	}
 
@@ -247,7 +249,7 @@ public class CodeHacker {
 	public Class<?> loadClass(final String fullClass) {
 		final CtClass classRef = getClass(fullClass);
 		try {
-			return classRef.toClass();
+			return classRef.toClass(classLoader, null);
 		}
 		catch (final CannotCompileException e) {
 			Log.warn("Cannot load class: " + fullClass, e);

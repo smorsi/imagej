@@ -94,7 +94,7 @@ public final class DefaultLegacyService extends AbstractService implements
 {
 
 	static {
-		new LegacyInjector().injectHooks();
+		new LegacyInjector().injectHooks(Thread.currentThread().getContextClassLoader());
 	}
 
 	@Parameter
