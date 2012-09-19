@@ -161,7 +161,15 @@ public class ServiceHelper extends AbstractContextual {
 			return service;
 		}
 		catch (final Exception e) {
-			if (log != null) log.error("Invalid service: " + c.getName(), e);
+			if (log != null) {
+				log.error("Invalid service: " + c.getName(), e);
+			} else {
+				e.printStackTrace();
+				if (e.getCause() != null) {
+					System.err.print("Cause: ");
+					e.getCause().printStackTrace();
+				}
+			}
 		}
 		return null;
 	}
@@ -221,7 +229,10 @@ public class ServiceHelper extends AbstractContextual {
 			}
 			catch (final Throwable e) {
 				final LogService log = getContext().getService(LogService.class);
-				if (log != null) {
+				if (log == null) {
+					e.printStackTrace();
+					if (e.getCause() != null) e.getCause().printStackTrace();
+				} else {
 					log.error("Invalid service: " + info.getClassName(), e);
 				}
 			}
