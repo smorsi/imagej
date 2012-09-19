@@ -606,7 +606,7 @@ public class OptionsSynchronizer {
 
 	private Roi getIJ1DefaultRoi() {
 		final Field field =
-			ClassUtils.getField("ij.plugin.OverlayCommands", "defaultRoi");
+			ClassUtils.getField(ij.plugin.OverlayCommands.class, "defaultRoi");
 		final Object obj = ClassUtils.getValue(field, null);
 		return (Roi) obj;
 	}
