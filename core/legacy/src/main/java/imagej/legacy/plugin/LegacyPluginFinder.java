@@ -39,7 +39,6 @@ import ij.IJ;
 import ij.Menus;
 import imagej.MenuEntry;
 import imagej.MenuPath;
-import imagej.command.Command;
 import imagej.command.CommandInfo;
 import imagej.input.Accelerator;
 import imagej.input.InputModifiers;
@@ -115,7 +114,7 @@ public class LegacyPluginFinder {
 		final Hashtable<?, ?> commands = Menus.getCommands();
 		final int startSize = plugins.size();
 		for (final Object key : commands.keySet()) {
-			final PluginInfo<Command> pe =
+			final PluginInfo<LegacyCommand> pe =
 				createEntry(key, commands, menuTable);
 			if (pe != null) plugins.add(pe);
 		}
@@ -143,7 +142,7 @@ public class LegacyPluginFinder {
 		r.close();
 	}
 
-	private PluginInfo<Command> createEntry(final Object key,
+	private PluginInfo<LegacyCommand> createEntry(final Object key,
 		final Hashtable<?, ?> commands, final Map<String, MenuPath> menuTable)
 	{
 		final String ij1PluginString = commands.get(key).toString();
@@ -179,9 +178,14 @@ public class LegacyPluginFinder {
 		final Map<String, Object> presets = new HashMap<String, Object>();
 		presets.put("className", className);
 		presets.put("arg", arg);
-		final CommandInfo<Command> pe =
-			new CommandInfo<Command>(LEGACY_PLUGIN_CLASS,
-				Command.class);
+		final CommandInfo<LegacyCommand> pe =
+			new CommandInfo<LegacyCommand>(LEGACY_PLUGIN_CLASS,
+				LegacyCommand.class) {
+			@Override
+			public Class<LegacyCommand> loadClass() {
+				return LegacyCommand.class;
+			}
+		};
 		pe.setLabel(makeLabel(menuPath));
 		pe.setMenuPath(menuPath);
 		pe.setPresets(presets);
