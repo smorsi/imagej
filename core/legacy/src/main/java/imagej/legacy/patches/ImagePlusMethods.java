@@ -39,7 +39,6 @@ import ij.ImagePlus;
 import ij.WindowManager;
 import imagej.ImageJ;
 import imagej.data.display.ImageDisplay;
-import imagej.legacy.DefaultLegacyService;
 import imagej.legacy.LegacyOutputTracker;
 import imagej.legacy.LegacyService;
 import imagej.util.Log;
@@ -99,7 +98,7 @@ public final class ImagePlusMethods {
 		//LegacyOutputTracker.getClosedImps().add(obj);
 		// Alternate method
 		// begin alternate
-		final DefaultLegacyService legacyService = DefaultLegacyService.getInstance();
+		final LegacyService legacyService = ImageJ.get(LegacyService.class);
 		ImageDisplay disp = legacyService.getImageMap().lookupDisplay(obj);
 		if (disp == null) {
 			legacyService.getImageMap().unregisterLegacyImage(obj);
