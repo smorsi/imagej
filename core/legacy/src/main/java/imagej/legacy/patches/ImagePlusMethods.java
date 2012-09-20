@@ -37,10 +37,9 @@ package imagej.legacy.patches;
 
 import ij.ImagePlus;
 import ij.WindowManager;
-import imagej.ImageJ;
 import imagej.data.display.ImageDisplay;
+import imagej.legacy.DefaultLegacyService;
 import imagej.legacy.LegacyOutputTracker;
-import imagej.legacy.LegacyService;
 import imagej.util.Log;
 
 /**
@@ -56,41 +55,38 @@ public final class ImagePlusMethods {
 	}
 
 	/** Appends {@link ImagePlus#updateAndDraw()}. */
-	public static void updateAndDraw(final ImagePlus obj) {
+	public static void updateAndDraw(final DefaultLegacyService legacyService, final ImagePlus obj) {
 		if (obj == null) return;
 		if (!obj.isProcessor()) return;
 		if (obj.getWindow() == null) return;
 		Log.debug("ImagePlus.updateAndDraw(): " + obj);
-		final LegacyService legacyService = ImageJ.get(LegacyService.class);
 		legacyService.legacyImageChanged(obj);
 		// TODO - add here too?
 		//WindowManager.setCurrentWindow(obj.getWindow());
 	}
 
 	/** Appends {@link ImagePlus#repaintWindow()}. */
-	public static void repaintWindow(final ImagePlus obj) {
+	public static void repaintWindow(final DefaultLegacyService legacyService, final ImagePlus obj) {
 		if (obj == null) return;
 		if (obj.getWindow() == null) return;
 		Log.debug("ImagePlus.repaintWindow(): " + obj);
-		final LegacyService legacyService = ImageJ.get(LegacyService.class);
 		legacyService.legacyImageChanged(obj);
 		// TODO - add here too?
 		//WindowManager.setCurrentWindow(obj.getWindow());
 	}
 
 	/** Appends {@link ImagePlus#show(String message)}. */
-	public static void show(final ImagePlus obj,
+	public static void show(final DefaultLegacyService legacyService, final ImagePlus obj,
 		@SuppressWarnings("unused") final String message)
 	{
 		if (obj == null) return;
 		Log.debug("ImagePlus.show(): " + obj);
-		final LegacyService legacyService = ImageJ.get(LegacyService.class);
 		legacyService.legacyImageChanged(obj);
 		WindowManager.setCurrentWindow(obj.getWindow());
 	}
 
 	/** Appends {@link ImagePlus#hide()}. */
-	public static void hide(final ImagePlus obj) {
+	public static void hide(final DefaultLegacyService legacyService, final ImagePlus obj) {
 		if (obj == null) return;
 		Log.debug("ImagePlus.hide(): " + obj);
 		LegacyOutputTracker.getOutputImps().remove(obj);
@@ -98,7 +94,6 @@ public final class ImagePlusMethods {
 		//LegacyOutputTracker.getClosedImps().add(obj);
 		// Alternate method
 		// begin alternate
-		final LegacyService legacyService = ImageJ.get(LegacyService.class);
 		ImageDisplay disp = legacyService.getImageMap().lookupDisplay(obj);
 		if (disp == null) {
 			legacyService.getImageMap().unregisterLegacyImage(obj);
@@ -110,7 +105,8 @@ public final class ImagePlusMethods {
 	}
 
 	/** Appends {@link ImagePlus#close()}. */
-	public static void close(final ImagePlus obj) {
+	// TODO: LegacyOutputTracker should not be a singleton
+	public static void close(@SuppressWarnings("unused") final DefaultLegacyService legacyService, final ImagePlus obj) {
 		if (obj == null) return;
 		// TODO - what is correct here?????
 		//else if (obj.getWindow() == null)

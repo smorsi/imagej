@@ -38,7 +38,7 @@ package imagej.legacy.patches;
 import ij.IJ;
 import imagej.ImageJ;
 import imagej.event.StatusService;
-import imagej.legacy.LegacyService;
+import imagej.legacy.DefaultLegacyService;
 import imagej.util.Log;
 
 /**
@@ -52,16 +52,16 @@ public class IJMethods {
 	private static final int PROGRESS_GRANULARITY = 1000;
 
 	/** Appends {@link IJ#showProgress(double)}. */
-	public static void showProgress(final double progress) {
+	public static void showProgress(final DefaultLegacyService legacyService, final double progress) {
 		// approximate progress as int ratio
 		final int currentIndex = (int) (PROGRESS_GRANULARITY * progress);
 		final int finalIndex = PROGRESS_GRANULARITY;
-		showProgress(currentIndex, finalIndex);
+		showProgress(legacyService, currentIndex, finalIndex);
 	}
 
 	/** Appends {@link IJ#showProgress(int, int)}. */
 	public static void
-		showProgress(final int currentIndex, final int finalIndex)
+		showProgress(final DefaultLegacyService legacyService, final int currentIndex, final int finalIndex)
 	{
 		Log.debug("showProgress: " + currentIndex + "/" + finalIndex);
 		// report progress through global event mechanism
@@ -71,9 +71,8 @@ public class IJMethods {
 	}
 
 	/** Appends {@link IJ#showStatus(String)}. */
-	public static void showStatus(final String s) {
+	public static void showStatus(final DefaultLegacyService legacyService, final String s) {
 		Log.debug("showStatus: " + s);
-		final LegacyService legacyService = ImageJ.get(LegacyService.class);
 		if (legacyService == null || !legacyService.isInitialized()) {
 			// suppress ImageJ1 bootup messages
 			return;

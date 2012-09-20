@@ -41,6 +41,7 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
+import javassist.Modifier;
 import javassist.NotFoundException;
 
 /**
@@ -67,6 +68,16 @@ public class CodeHacker {
 		this.classLoader = classLoader;
 		pool = new ClassPool();
 		pool.appendClassPath(new ClassClassPath(getClass()));
+
+		CtClass util = pool.makeClass("imagej.legacy.Legacy");
+		try {
+			util.addMethod(CtNewMethod.make("public static imagej.legacy.DefaultLegacyService getInstance() {" +
+					"\treturn imagej.legacy.DefaultLegacyService.getInstance();" +
+					"}", util));
+			util.toClass(classLoader, null);
+		} catch (CannotCompileException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -101,7 +112,7 @@ public class CodeHacker {
 		final String methodSig, final String newCode)
 	{
 		try {
-			getMethod(fullClass, methodSig).insertAfter(newCode);
+			getMethod(fullClass, methodSig).insertAfter(expand(newCode));
 		}
 		catch (final CannotCompileException e) {
 			throw new IllegalArgumentException("Cannot modify method: " + methodSig,
@@ -141,7 +152,7 @@ public class CodeHacker {
 		final String methodSig, final String newCode)
 	{
 		try {
-			getMethod(fullClass, methodSig).insertBefore(newCode);
+			getMethod(fullClass, methodSig).insertBefore(expand(newCode));
 		}
 		catch (final CannotCompileException e) {
 			throw new IllegalArgumentException("Cannot modify method: " + methodSig,
@@ -187,7 +198,7 @@ public class CodeHacker {
 		final String newCode)
 	{
 		final CtClass classRef = getClass(fullClass);
-		final String methodBody = methodSig + " { " + newCode + " } ";
+		final String methodBody = methodSig + " { " + expand(newCode) + " } ";
 		try {
 			final CtMethod methodRef = CtNewMethod.make(methodBody, classRef);
 			classRef.addMethod(methodRef);
@@ -301,23 +312,35 @@ public class CodeHacker {
 		final boolean isStatic = isStatic(methodSig);
 		final boolean isVoid = isVoid(methodSig);
 
+		final String patchClass = PATCH_PKG + "." + className + PATCH_SUFFIX;
+		for (final CtMethod method : getClass(patchClass).getMethods()) try {
+			if ((method.getModifiers() & Modifier.STATIC) == 0) continue;
+			final CtClass[] types = method.getParameterTypes();
+			if (types.length == 0 || !types[0].getName().equals("imagej.legacy.DefaultLegacyService")) {
+				throw new UnsupportedOperationException("Method " + method + " of class " + patchClass + " has wrong type!");
+			}
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+		}
+
 		final StringBuilder newCode =
-			new StringBuilder((isVoid ? "" : "return ") + PATCH_PKG + "." +
-				className + PATCH_SUFFIX + "." + methodName + "(");
-		boolean firstArg = true;
+			new StringBuilder((isVoid ? "" : "return ") + patchClass + "." + methodName + "(");
+		newCode.append("$service");
 		if (!isStatic) {
-			newCode.append("this");
-			firstArg = false;
+			newCode.append(", this");
 		}
 		final int argCount = getMethodArgTypes(methodSig).length;
 		for (int i = 1; i <= argCount; i++) {
-			if (firstArg) firstArg = false;
-			else newCode.append(", ");
-			newCode.append("$" + i);
+			newCode.append(", $" + i);
 		}
 		newCode.append(");");
 
 		return newCode.toString();
+	}
+
+	/** Patches in the current legacy service for '$service' */
+	private String expand(final String code) {
+		return code.replace("$service", "imagej.legacy.Legacy.getInstance()");
 	}
 
 	/** Extracts the method name from the given method signature. */
