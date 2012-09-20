@@ -60,7 +60,7 @@ public class StderrLogService extends AbstractService implements LogService {
 	@Override
 	public void debug(Throwable t) {
 		if (isDebug()) {
-			t.printStackTrace();
+			log("[DEBUG] ", t);
 		}
 	}
 
@@ -79,7 +79,7 @@ public class StderrLogService extends AbstractService implements LogService {
 
 	@Override
 	public void error(Throwable t) {
-		t.printStackTrace();
+		log("[ERROR] ", t);
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class StderrLogService extends AbstractService implements LogService {
 
 	@Override
 	public void info(Throwable t) {
-		t.printStackTrace();
+		log("[INFO] ", t);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class StderrLogService extends AbstractService implements LogService {
 
 	@Override
 	public void trace(Throwable t) {
-		t.printStackTrace();
+		log("[TRACE] ", t);
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class StderrLogService extends AbstractService implements LogService {
 
 	@Override
 	public void warn(Throwable t) {
-		t.printStackTrace();
+		log("[WARN] ", t);
 	}
 
 	@Override
@@ -182,4 +182,16 @@ public class StderrLogService extends AbstractService implements LogService {
 		System.err.print(prefix);
 		System.err.println(message);
 	}
+
+	/**
+	 * Prints an exception to stderr.
+	 * 
+	 * @param prefix the prefix (can be an empty string)
+	 * @param t the exception
+	 */
+	private void log(final String prefix, final Throwable t) {
+		System.err.print(prefix);
+		t.printStackTrace();
+	}
+
 }
