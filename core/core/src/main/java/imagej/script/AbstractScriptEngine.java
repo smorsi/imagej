@@ -50,6 +50,8 @@ import javax.script.ScriptException;
  */
 public abstract class AbstractScriptEngine implements ScriptEngine {
 
+	public static final String FILENAME = "javax.scripting.filename";
+
 	// Abstract methods
 
 	@Override
