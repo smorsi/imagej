@@ -39,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -76,9 +77,9 @@ public class FileUtilsTest {
 	}
 
 	@Test
-	public void testURLToFile() throws MalformedURLException {
+	public void testURLToFile() throws MalformedURLException, IOException {
 		// verify that 'file:' URL works
-		final String filePath = "/Users/jqpublic/imagej/ImageJ.class";
+		final String filePath = "/Users/jqpublic/imagej/ImageJ.class".replace('/', File.separatorChar);
 		final String fileURL = "file:" + filePath;
 		final File fileFile = FileUtils.urlToFile(fileURL);
 		assertEquals(filePath, fileFile.getPath());
@@ -88,21 +89,21 @@ public class FileUtilsTest {
 			new File("/Users/Spaceman Spiff/stun/Blaster.class");
 		final URL spaceURL = spaceFileOriginal.toURI().toURL();
 		final File spaceFileResult = FileUtils.urlToFile(spaceURL);
-		assertEquals(spaceFileOriginal.getPath(), spaceFileResult.getPath());
+		assertEquals(spaceFileOriginal.getCanonicalFile(), spaceFileResult.getCanonicalFile());
 
 		// verify that file path with various characters works
 		final String alphaLo = "abcdefghijklmnopqrstuvwxyz";
 		final String alphaHi = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		final String numbers = "1234567890";
-		final String special = "_~!@#$%^&*()+`-=";
+		final String special = "_~!@#$%^&()+`-=";
 		final File specialFileOriginal = new File("/Users/" + alphaLo + "/" +
 			alphaHi + "/" + numbers + "/" + special + "/foo/Bar.class");
 		final URL specialURL = specialFileOriginal.toURI().toURL();
 		final File specialFileResult = FileUtils.urlToFile(specialURL);
-		assertEquals(specialFileOriginal.getPath(), specialFileResult.getPath());
-
+		assertEquals(specialFileOriginal.getCanonicalFile(), specialFileResult.getCanonicalFile());
+                
 		// verify that 'jar:' URL works
-		final String jarPath = "/Users/jqpublic/imagej/ij-core.jar";
+		final String jarPath = "/Users/jqpublic/imagej/ij-core.jar".replace('/', File.separatorChar);
 		final String jarURL = "jar:file:" + jarPath + "!/imagej/ImageJ.class";
 		final File jarFile = FileUtils.urlToFile(jarURL);
 		assertEquals(jarPath, jarFile.getPath());
@@ -117,7 +118,7 @@ public class FileUtilsTest {
 			// NB: Expected behavior.
 		}
 	}
-
+        
 	@Test
 	public void testShortenPath() {
 		assertEquals("C:\\Documents and Settings\\"

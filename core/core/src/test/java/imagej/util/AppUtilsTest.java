@@ -39,6 +39,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -50,13 +51,13 @@ import org.junit.Test;
 public class AppUtilsTest {
 
 	@Test
-	public void testBaseDirectory() {
+	public void testBaseDirectory() throws IOException {
 		assertNull(AppUtils.getBaseDirectory(new File(
 			"/home/blub/.m2/repository/org/dscho/secret/1.0/secret-1.0.jar"), null));
-		assertEquals(new File("/tmp"), AppUtils.getBaseDirectory(new File(
-			"/tmp/app/target/classes"), "app"));
-		assertEquals(new File("/tmp"), AppUtils.getBaseDirectory(new File(
-			"/tmp/app/target/ij-app-1.57.jar"), "app"));
+		assertEquals(new File("/tmp").getCanonicalFile(), AppUtils.getBaseDirectory(new File(
+			"/tmp/app/target/classes"), "app").getCanonicalFile());
+		assertEquals(new File("/tmp").getCanonicalFile(), AppUtils.getBaseDirectory(new File(
+			"/tmp/app/target/ij-app-1.57.jar"), "app").getCanonicalFile());
 	}
 
 }
