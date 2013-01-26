@@ -83,14 +83,18 @@ public class ClassUtilsTest {
 		out.putNextEntry(new ZipEntry(path));
 		copy(getClass().getResource("/" + path).openStream(), out, true);
 
-		final ClassLoader classLoader =
+		ClassLoader classLoader =
 			new URLClassLoader(new URL[] { jar.toURI().toURL() }, null);
 		final URL location = ClassUtils.getLocation(getClass().getName(), classLoader);
 		assertEquals(jar, FileUtils.urlToFile(location));
-		// assert fails, Windows 8
-		// assertTrue(jar.delete());
-		jar.deleteOnExit();
-		jar.delete();
+
+		// test was failing under Windows 8; ugly, two part workaround:
+		// first, attempt to dispose of classLoader, which holds a reference to jar
+		classLoader = null;
+		System.gc();
+
+		// second, retry delete upon failure
+		assertTrue(retryDelete(jar));
 	}
 
 	/**
@@ -114,4 +118,28 @@ public class ClassUtilsTest {
 		if (closeOut) out.close();
 	}
 
+	private static final int ITERATIONS = 10;
+	private static final int SLEEP_TIME = 1;
+	
+	/**
+	 * Retries {@link File} deletion upon failure.  Sleeps between retries.
+	 * 
+	 * @param file
+	 * @return whether deleted
+	 */
+	private static boolean retryDelete(File file) {
+		boolean success = false;
+		for (int iteration = 0; iteration < ITERATIONS; ++iteration) {
+			if (file.delete()) {
+				success = true;
+				break;
+			}
+			try {
+			    Thread.sleep(SLEEP_TIME);
+			}
+			catch (InterruptedException e) {  
+			}
+		}
+		return success;
+	}
 }
