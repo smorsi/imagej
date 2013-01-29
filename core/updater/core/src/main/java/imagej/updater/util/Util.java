@@ -256,6 +256,8 @@ public class Util {
 				}
 				updateDigest(inputStream, digest);
 			}
+			// closing jar file closes all input streams obtained above
+			jar.close();
 		}
 		return toHex(digest.digest());
 	}

@@ -193,6 +193,9 @@ public class Diff {
 					localIndex++;
 				}
 			}
+			// closing jar file closes all input streams obtained above
+			remoteJar.close();
+			localJar.close();
 			return;
 		}
 

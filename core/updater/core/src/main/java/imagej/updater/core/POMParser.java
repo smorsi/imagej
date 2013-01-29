@@ -67,7 +67,7 @@ public class POMParser extends DefaultHandler {
 	}
 
 	public static void fillMetadataFromJar(final FileObject object, final File file) throws ParserConfigurationException, IOException, SAXException {	
-	    final JarFile jar = new JarFile(file);
+		final JarFile jar = new JarFile(file);
 		for (final JarEntry entry : Util.iterate(jar.entries())) {
 			if (entry.getName().matches("META-INF/maven/.*/pom.xml")) {
 				new POMParser(object).read(jar.getInputStream(entry));

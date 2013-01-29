@@ -78,8 +78,9 @@ public class Class2JarFilesMap extends HashMap<String, ArrayList<String>> {
 	}
 
 	private void addJar(final String jar) throws IOException {
+		JarFile file = null;
 		try {
-			final JarFile file = new JarFile(new File(imagejRoot, jar));
+			file = new JarFile(new File(imagejRoot, jar));
 			final Enumeration<JarEntry> entries = file.entries();
 			while (entries.hasMoreElements()) {
 				final String name = (entries.nextElement()).getName();
@@ -89,6 +90,9 @@ public class Class2JarFilesMap extends HashMap<String, ArrayList<String>> {
 		}
 		catch (final ZipException e) {
 			UpdaterUserInterface.get().log("Warning: could not open " + jar);
+		}
+		finally {
+			file.close();
 		}
 	}
 
