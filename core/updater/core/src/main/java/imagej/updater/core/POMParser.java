@@ -66,14 +66,16 @@ public class POMParser extends DefaultHandler {
 		this.file = file;
 	}
 
-	public static void fillMetadataFromJar(final FileObject object, final File file) throws ParserConfigurationException, IOException, SAXException {
-		final JarFile jar = new JarFile(file);
+	public static void fillMetadataFromJar(final FileObject object, final File file) throws ParserConfigurationException, IOException, SAXException {	
+	    final JarFile jar = new JarFile(file);
 		for (final JarEntry entry : Util.iterate(jar.entries())) {
 			if (entry.getName().matches("META-INF/maven/.*/pom.xml")) {
 				new POMParser(object).read(jar.getInputStream(entry));
 				break;
 			}
 		}
+		// closing jar file closes all input streams obtained above
+		jar.close();
 	}
 
 	public void read(final InputStream in) throws ParserConfigurationException, IOException, SAXException {
