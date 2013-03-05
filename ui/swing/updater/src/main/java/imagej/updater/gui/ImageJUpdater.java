@@ -59,6 +59,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.scijava.event.StatusService;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Menu;
