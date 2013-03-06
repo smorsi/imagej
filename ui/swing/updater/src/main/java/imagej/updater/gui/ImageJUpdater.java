@@ -35,6 +35,7 @@
 
 package imagej.updater.gui;
 
+import fiji.SwingEDTChecker;
 import imagej.command.CommandService;
 import imagej.updater.core.Conflicts.Conflict;
 import imagej.updater.core.FileObject;
@@ -290,6 +291,7 @@ public class ImageJUpdater implements UpdaterUI {
 	}
 
 	public static void main(String[] args) {
+		if (!SwingEDTChecker.startProfiling(null, args)) return;
 		new ImageJUpdater().run();
 	}
 }

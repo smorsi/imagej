@@ -33,6 +33,11 @@
 			<version>${miglayout.version}</version>
 			<classifier>swing</classifier>
 		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>profilers</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<properties>
