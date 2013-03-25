@@ -100,11 +100,13 @@ import org.scijava.service.Service;
 public final class DefaultLegacyService extends AbstractService implements
 	LegacyService
 {
+	private final static LegacyInjector legacyInjector;
 
 	static {
 		final ClassLoader contextClassLoader =
 			Thread.currentThread().getContextClassLoader();
-		new LegacyInjector().injectHooks(contextClassLoader);
+		legacyInjector = new LegacyInjector();
+		legacyInjector.injectHooks(contextClassLoader);
 	}
 
 	@Parameter
@@ -317,6 +319,7 @@ public final class DefaultLegacyService extends AbstractService implements
 		synchronized (DefaultLegacyService.class) {
 			checkInstance();
 			instance = this;
+			legacyInjector.setLegacyService(this);
 		}
 
 		// initialize legacy ImageJ application
