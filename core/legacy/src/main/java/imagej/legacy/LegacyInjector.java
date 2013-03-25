@@ -63,6 +63,9 @@ public class LegacyInjector {
 			"public static void showStatus(java.lang.String s)");
 		hacker.loadClass("ij.IJ");
 
+		// make sure that there is a legacy service
+		setLegacyService(new DummyLegacyService());
+
 		// override behavior of ij.ImageJ
 		hacker.insertMethod("ij.ImageJ",
 			"public java.awt.Point getLocationOnScreen()");
