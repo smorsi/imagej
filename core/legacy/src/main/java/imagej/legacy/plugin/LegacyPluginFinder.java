@@ -153,6 +153,7 @@ public class LegacyPluginFinder {
 		// NB: Check whether menu path is already taken by a modern ImageJ command.
 		// This allows transparent override of legacy commands.
 		final MenuPath menuPath = menuTable.get(key);
+		if (menuPath == null) return null;
 		final boolean overridden = appMenu.getMenu(menuPath) != null;
 
 		if (log.isDebug()) {
