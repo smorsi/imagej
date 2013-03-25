@@ -323,7 +323,7 @@ public final class DefaultLegacyService extends AbstractService implements
 		}
 
 		// initialize legacy ImageJ application
-		try {
+		if (IJ.getInstance() == null) try {
 			new ij.ImageJ(ij.ImageJ.NO_SHOW);
 		}
 		catch (final Throwable t) {
