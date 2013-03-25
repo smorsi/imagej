@@ -46,13 +46,19 @@ import org.scijava.util.ClassUtils;
  */
 public class LegacyInjector {
 	private CodeHacker hacker;
-	private ClassLoader classLoader;
 
 	/** Overrides class behavior of ImageJ1 classes by injecting method hooks. */
 	public void injectHooks(final ClassLoader classLoader) {
 		// NB: Override class behavior before class loading gets too far along.
-		this.classLoader = classLoader;
 		hacker = new CodeHacker(classLoader);
+
+		// override behavior of ij.ImageJ
+		hacker.insertMethod("ij.ImageJ",
+			"public java.awt.Point getLocationOnScreen()");
+		hacker.insertBeforeMethod("ij.ImageJ",
+			"public java.awt.Point getLocationOnScreen()",
+			"if ($isLegacyMode()) return super.getLocationOnScreen();");
+		hacker.loadClass("ij.ImageJ");
 
 		// override behavior of ij.IJ
 		hacker.insertAfterMethod("ij.IJ",
@@ -62,17 +68,6 @@ public class LegacyInjector {
 		hacker.insertAfterMethod("ij.IJ",
 			"public static void showStatus(java.lang.String s)");
 		hacker.loadClass("ij.IJ");
-
-		// make sure that there is a legacy service
-		setLegacyService(new DummyLegacyService());
-
-		// override behavior of ij.ImageJ
-		hacker.insertMethod("ij.ImageJ",
-			"public java.awt.Point getLocationOnScreen()");
-		hacker.insertBeforeMethod("ij.ImageJ",
-			"public java.awt.Point getLocationOnScreen()",
-			"if ($isLegacyMode()) return super.getLocationOnScreen();");
-		hacker.loadClass("ij.ImageJ");
 
 		// override behavior of ij.ImagePlus
 		hacker.insertAfterMethod("ij.ImagePlus", "public void updateAndDraw()");
@@ -126,6 +121,9 @@ public class LegacyInjector {
 		hacker.insertMethod("ij.plugin.frame.RoiManager",
 			"public void setVisible(boolean b)", ";");
 		hacker.loadClass("ij.plugin.frame.RoiManager");
+
+		// make sure that there is a legacy service
+		setLegacyService(new DummyLegacyService());
 	}
 
 	void setLegacyService(final LegacyService legacyService) {
